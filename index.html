@@ -51,6 +51,20 @@
     <div id="overlay">
       <div class="overlay-title">GAME OVER</div>
       <div class="overlay-score">SCORE &nbsp;<span id="final-score">0</span></div>
+      <!-- Name entry -->
+<div id="name-form">
+  <label for="name-input">ENTER YOUR NAME</label>
+  <input id="name-input" type="text" maxlength="30" placeholder="your name" autocomplete="off" spellcheck="false" />
+  <button id="save-btn">[ SAVE SCORE ]</button>
+  <div id="save-status"></div>
+</div>
+
+<!-- Leaderboard -->
+<div id="leaderboard">
+  <h3>── TOP 10 ──</h3>
+  <div id="lb-loading">loading...</div>
+  <ul id="lb-list"></ul>
+</div>
       <button class="restart-btn" id="restart-btn">[ RESTART ]</button>
     </div>
 
@@ -60,6 +74,38 @@
       <button id="retry-cam-btn">retry camera</button>
     </div>
   </div>
+
+  <!-- FIREBASE (ES module) -->
+<script type="module">
+  import { initializeApp }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, collection, addDoc,
+           query, orderBy, limit, getDocs, getDocsFromServer,serverTimestamp }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyD2BVjM3rINvi-at3rvGTyfvKdYPk241CU",
+    authDomain: "augmented-snake-game.firebaseapp.com",
+    projectId: "augmented-snake-game",
+    storageBucket: "augmented-snake-game.firebasestorage.app",
+    messagingSenderId: "152031358442",
+    appId: "1:152031358442:web:3d65ebafb7c7ed79dc9693"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  window._db              = db;
+  window._collection      = collection;
+  window._addDoc          = addDoc;
+  window._query           = query;
+  window._orderBy         = orderBy;
+  window._limit           = limit;
+  window._getDocs         = getDocs;
+  window._serverTimestamp = serverTimestamp;
+  window._getDocsFromServer = getDocsFromServer;
+  window._fbReady = true;
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
 
   <!-- ─── MEDIAPIPE ─── -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>

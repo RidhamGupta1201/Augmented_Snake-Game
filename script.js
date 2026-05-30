@@ -34,7 +34,11 @@
     const gestureHint  = document.getElementById('gesture-hint');
     const handDot      = document.getElementById('hand-dot');
     const permMsg      = document.getElementById('perm-msg');
-
+    const nameInput    = document.getElementById('name-input');
+    const saveBtn      = document.getElementById('save-btn');
+    const saveStatus   = document.getElementById('save-status');
+    const lbLoading    = document.getElementById('lb-loading');
+    const lbList       = document.getElementById('lb-list');
     function initCanvas() {
       gameCanvas.width  = window.innerWidth;
       gameCanvas.height = window.innerHeight;
@@ -201,12 +205,17 @@
     }
 
     function endGame() {
-      running = false;
-      clearInterval(gameInterval);
-      finalScore.textContent = score;
-      overlay.classList.add('show');
+        running = false;
+        clearInterval(gameInterval);
+        finalScore.textContent = score;
+        // reset form state
+        nameInput.value        = '';
+        saveBtn.disabled       = false;
+        saveStatus.textContent = '';
+        saveStatus.className   = '';
+        overlay.classList.add('show');
+        loadLeaderboard();
     }
-
     function updateHUD() {
       scoreVal.textContent = score;
       bestVal.textContent  = 'BEST: ' + hiScore;
@@ -406,7 +415,90 @@
       permMsg.style.display = 'none';
       startCamera();
     });
+    async function saveScore() {
+  const name = nameInput.value.trim();
+  if (!name) {
+    saveStatus.textContent = 'please enter your name';
+    saveStatus.className = 'err';
+    nameInput.focus();
+    return;
+  }
 
+  if (!window._fbReady) {
+    saveStatus.textContent = '✗ firebase not loaded yet, try again';
+    saveStatus.className = 'err';
+    return;
+  }
+
+  saveBtn.disabled = true;
+  saveStatus.textContent = 'saving...';
+  saveStatus.className = '';
+
+  try {
+    await window._addDoc(
+      window._collection(window._db, 'scores'),
+      { name, score, playedAt: window._serverTimestamp() }
+    );
+    saveStatus.textContent = '✓ score saved!';
+    saveStatus.className = 'ok';
+    loadLeaderboard();
+  } catch (e) {
+    saveStatus.textContent = '✗ could not save — check firebase config';
+    saveStatus.className = 'err';
+    saveBtn.disabled = false;
+  }
+}
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+async function loadLeaderboard() {
+  lbLoading.style.display = 'block';
+  lbLoading.style.color   = '';
+  lbList.innerHTML = '';
+
+  if (!window._fbReady) {
+    await new Promise(resolve =>
+      window.addEventListener('firebase-ready', resolve, { once: true })
+    );
+  }
+
+  try {
+    const q    = window._query(
+      window._collection(window._db, 'scores'),
+      window._orderBy('score', 'desc'),
+      window._limit(10)
+    );
+    const snap = await window._getDocsFromServer(q);
+
+    lbLoading.style.display = 'none';
+
+    if (snap.empty) {
+      lbList.innerHTML = '<li style="justify-content:center;color:var(--muted);font-size:.7rem;letter-spacing:2px">no scores yet</li>';
+      return;
+    }
+
+let i = 0;
+snap.forEach((doc) => {
+  const row = doc.data();
+  const li  = document.createElement('li');
+  li.className = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : '';
+  const medals = ['🥇','🥈','🥉'];
+  li.innerHTML = `
+    <span class="lb-rank">${medals[i] || (i+1)}</span>
+    <span class="lb-name">${escHtml(row.name)}</span>
+    <span class="lb-score">${row.score}</span>
+  `;
+  lbList.appendChild(li);
+  i++;
+});
+  } catch(e) {
+    lbLoading.textContent = 'could not load scores';
+    lbLoading.style.color = 'var(--red)';
+    lbLoading.style.display = 'block';
+  }
+}
+saveBtn.addEventListener('click', saveScore);
+nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') saveScore(); });
     // Animate food on start screen (draw loop keeps food pulsing after game starts)
     (function foodLoop() {
       if (running) { draw(); }
