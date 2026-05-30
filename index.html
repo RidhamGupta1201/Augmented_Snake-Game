@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gesture Snake</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ─── START SCREEN ─── -->
+  <div id="start-screen">
+    <div class="logo">SNAKE</div>
+    <div class="tagline">gesture controlled</div>
+    <div class="instructions">
+      <p>pinch your <span class="highlight">thumb + index finger</span> together</p>
+      <p>move the pinch in any direction to <span class="highlight">steer the snake</span></p>
+      <p>eat the <span class="highlight">red fruit</span> to grow &amp; score</p>
+    </div>
+    <button class="play-btn" id="play-btn">▶ &nbsp; PLAY</button>
+    <div class="key-hint">arrow keys also work as fallback</div>
+  </div>
+
+  <!-- ─── GAME ─── -->
+  <div id="game-wrap">
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Camera preview -->
+    <div id="cam-wrap">
+      <video id="video" autoplay muted playsinline></video>
+      <canvas id="landmark-canvas"></canvas>
+      <div id="hand-dot"></div>
+      <div class="cam-label">GESTURE CAM</div>
+    </div>
+
+    <!-- HUD -->
+    <div id="hud">
+      <div class="score-label">SCORE</div>
+      <div class="score-value" id="score-val">0</div>
+      <div class="best-value" id="best-val">BEST: 0</div>
+    </div>
+
+    <!-- Direction arrow -->
+    <div id="dir-indicator">→</div>
+
+    <!-- Gesture hint -->
+    <div id="gesture-hint">pinch thumb + index, then move to steer</div>
+
+    <!-- Game over overlay -->
+    <div id="overlay">
+      <div class="overlay-title">GAME OVER</div>
+      <div class="overlay-score">SCORE &nbsp;<span id="final-score">0</span></div>
+      <button class="restart-btn" id="restart-btn">[ RESTART ]</button>
+    </div>
+
+    <!-- Camera permission fallback -->
+    <div id="perm-msg">
+      <p>camera access was denied<br>gesture control unavailable</p>
+      <button id="retry-cam-btn">retry camera</button>
+    </div>
+  </div>
+
+  <!-- ─── MEDIAPIPE ─── -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
