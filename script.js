@@ -7,6 +7,7 @@
     let score = 0, hiScore = 0;
     let running = false;
     let gameInterval = null;
+    let paused = false;
 
     // Gesture tracking
     let fingerX = 0.5, fingerY = 0.5;
@@ -39,6 +40,8 @@
     const saveStatus   = document.getElementById('save-status');
     const lbLoading    = document.getElementById('lb-loading');
     const lbList       = document.getElementById('lb-list');
+    const pauseMsg = document.getElementById('pause-msg');
+
     function initCanvas() {
       gameCanvas.width  = window.innerWidth;
       gameCanvas.height = window.innerHeight;
@@ -47,6 +50,8 @@
     }
 
     function resetGame() {
+      paused = false;                        
+      pauseMsg.style.display = 'none';   
       const cx = Math.floor(cols / 2);
       const cy = Math.floor(rows / 2);
       snake   = [{ x: cx, y: cy }, { x: cx - 1, y: cy }, { x: cx - 2, y: cy }];
@@ -206,6 +211,8 @@
 
     function endGame() {
         running = false;
+        paused = false;                        
+        pauseMsg.style.display = 'none';
         clearInterval(gameInterval);
         finalScore.textContent = score;
         // reset form state
@@ -326,24 +333,34 @@
         minTrackingConfidence: 0.5,
       });
 
-      hands.onResults(results => {
-        if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-          const lm = results.multiHandLandmarks[0];
-          // Pinch midpoint: average of thumb tip (#4) and index tip (#8)
-          // X is flipped (1 - x) to match the mirrored video preview
-          prevFX = fingerX; prevFY = fingerY;
-          fingerX = ((1 - lm[4].x) + (1 - lm[8].x)) / 2;
-          fingerY = (lm[4].y + lm[8].y) / 2;
-          handDot.classList.add('active');
-          gestureHint.style.opacity = '0';
-          if (running) applyGesture();
-          drawSkeleton(lm);
-        } else {
-          handDot.classList.remove('active');
-          gestureHint.style.opacity = '1';
-          lmCtx.clearRect(0, 0, lmCanvas.width, lmCanvas.height);
-        }
-      });
+hands.onResults(results => {
+  if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+    const lm = results.multiHandLandmarks[0];
+    prevFX = fingerX; prevFY = fingerY;
+    fingerX = ((1 - lm[4].x) + (1 - lm[8].x)) / 2;
+    fingerY = (lm[4].y + lm[8].y) / 2;
+    handDot.classList.add('active');
+    gestureHint.style.opacity = '0';
+    // Resume if was paused
+    if (paused && running) {
+      paused = false;
+      pauseMsg.style.display = 'none';
+      gameInterval = setInterval(tick, TICK_MS);
+    }
+    if (running && !paused) applyGesture();
+    drawSkeleton(lm);
+  } else {
+    handDot.classList.remove('active');
+    gestureHint.style.opacity = '1';
+    lmCtx.clearRect(0, 0, lmCanvas.width, lmCanvas.height);
+    // Pause if hand disappears during game
+    if (running && !paused) {
+      paused = true;
+      clearInterval(gameInterval);
+      pauseMsg.style.display = 'flex';
+    }
+  }
+});
 
       const camera = new Camera(video, {
         onFrame: async () => { await hands.send({ image: video }); },

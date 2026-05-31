@@ -351,6 +351,45 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.4; }
     }
+
+    /* ─── PAUSE OVERLAY ─── */
+#pause-msg {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(7, 8, 16, 0.75);
+  z-index: 35;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pause-icon {
+  font-size: 3rem;
+  animation: wave 1s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(-10deg); }
+  50%       { transform: rotate(10deg); }
+}
+
+.pause-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 8px;
+  text-shadow: 0 0 30px var(--green-dim);
+}
+
+.pause-sub {
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  color: var(--muted);
+}
+
     /* ─── NAME ENTRY ─── */
 #name-form { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 1.8rem; }
 #name-form label { font-size: .7rem; letter-spacing: 4px; color: var(--muted); }
