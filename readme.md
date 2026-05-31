@@ -2,9 +2,6 @@
 
 > A browser-based Snake game controlled entirely by hand gestures using your webcam — no keyboard, no touch, just your hand.
 
-![Game Preview](https://augmented-snakegame.netlify.app/)
-
-[![Netlify Status](https://api.netlify.com/api/v1/badges/placeholder/deploy-status)](https://augmented-snakegame.netlify.app/)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
 ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=firebase&logoColor=black)
 ![MediaPipe](https://img.shields.io/badge/MediaPipe-0097A7?style=flat&logo=google&logoColor=white)
