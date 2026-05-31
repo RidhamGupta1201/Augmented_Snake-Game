@@ -41,7 +41,8 @@
     const lbLoading    = document.getElementById('lb-loading');
     const lbList       = document.getElementById('lb-list');
     const pauseMsg = document.getElementById('pause-msg');
-
+    const countdown       = document.getElementById('countdown');
+    
     function initCanvas() {
       gameCanvas.width  = window.innerWidth;
       gameCanvas.height = window.innerHeight;
@@ -73,6 +74,31 @@
       food = pos;
     }
 
+    function startCountdown(callback) {
+      const el  = document.getElementById('countdown');
+      const num = document.getElementById('countdown-number');
+      let count = 3;
+
+      function showNext() {
+        if (count === 0) {
+          el.classList.remove('show');
+          callback();
+          return;
+        }
+
+        // Reset animation
+        num.style.animation = 'none';
+        num.textContent = count;
+        void num.offsetWidth; // force reflow
+        num.style.animation = 'countdown-pop 0.6s ease-out forwards';
+
+        count--;
+        setTimeout(showNext, 600);
+      }
+
+      el.classList.add('show');
+      showNext();
+    }
 
     function tick() {
       dir = nextDir;
@@ -410,23 +436,23 @@ hands.onResults(results => {
       if (running) draw();
     });
 
-    document.getElementById('play-btn').addEventListener('click', () => {
-      startScreen.style.display = 'none';
-      gameWrap.style.display    = 'block';
-      initCanvas();
-      lmCanvas.width  = 180;
-      lmCanvas.height = 135;
-      resetGame();
-      startRunning();
-      draw();
-      startCamera();
-    });
+document.getElementById('play-btn').addEventListener('click', () => {
+  startScreen.style.display = 'none';
+  gameWrap.style.display    = 'block';
+  initCanvas();
+  lmCanvas.width  = 180;
+  lmCanvas.height = 135;
+  resetGame();
+  draw();
+  startCamera();
+  startCountdown(() => startRunning()); // ← snake starts only after countdown
+});
 
-    document.getElementById('restart-btn').addEventListener('click', () => {
-      overlay.classList.remove('show');
-      resetGame();
-      startRunning();
-    });
+document.getElementById('restart-btn').addEventListener('click', () => {
+  overlay.classList.remove('show');
+  resetGame();
+  startCountdown(() => startRunning());
+});
 
     document.getElementById('retry-cam-btn').addEventListener('click', () => {
       permMsg.style.display = 'none';

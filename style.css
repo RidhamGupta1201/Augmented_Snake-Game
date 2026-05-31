@@ -391,21 +391,54 @@
 }
 
     /* ─── NAME ENTRY ─── */
-#name-form { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 1.8rem; }
-#name-form label { font-size: .7rem; letter-spacing: 4px; color: var(--muted); }
+#name-form { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  gap: 12px; 
+  margin-bottom: 1.8rem; 
+}
+#name-form label { 
+  font-size: .7rem; 
+  letter-spacing: 4px; 
+  color: var(--muted); 
+}
+
 #name-input {
-  background: var(--bg2); border: 1px solid var(--green-dim); color: var(--green);
-  font-family: 'Share Tech Mono', monospace; font-size: 1rem; letter-spacing: 3px;
-  padding: 10px 20px; text-align: center; outline: none; width: 240px;
+  background: var(--bg2); 
+  border: 1px solid var(--green-dim); 
+  color: var(--green);
+  font-family: 'Share Tech Mono', monospace; 
+  font-size: 1rem; 
+  letter-spacing: 3px;
+  padding: 10px 20px; 
+  text-align: center; 
+  outline: none; 
+  width: 240px;
   transition: border-color .2s;
 }
-#name-input:focus { border-color: var(--green); box-shadow: 0 0 12px var(--green-dim); }
-#name-input::placeholder { color: var(--muted); }
-#save-btn {
-  background: transparent; border: 1px solid var(--green); color: var(--green);
-  font-family: 'Share Tech Mono', monospace; font-size: .8rem; letter-spacing: 4px;
-  padding: 10px 28px; cursor: pointer; transition: background .2s;
+
+#name-input:focus { 
+  border-color: var(--green); 
+  box-shadow: 0 0 12px var(--green-dim); 
 }
+
+#name-input::placeholder { 
+  color: var(--muted); 
+}
+
+#save-btn {
+  background: transparent; 
+  border: 1px solid var(--green); 
+  color: var(--green);
+  font-family: 'Share Tech Mono', monospace; 
+  font-size: .8rem; 
+  letter-spacing: 4px;
+  padding: 10px 28px; 
+  cursor: pointer; 
+  transition: background .2s;
+}
+
 #save-btn:hover { background: var(--green-glow); }
 #save-btn:disabled { opacity: .4; cursor: default; }
 #save-status { font-size: .7rem; letter-spacing: 2px; min-height: 1rem; }
@@ -429,3 +462,31 @@
 #lb-list li .lb-name  { flex: 1; padding: 0 8px; }
 #lb-list li .lb-score { color: var(--green); font-family: 'Orbitron', sans-serif; font-size: .75rem; }
 #lb-loading { text-align: center; font-size: .7rem; color: var(--muted); letter-spacing: 2px; padding: 12px 0; }
+
+/* ─── COUNTDOWN ─── */
+#countdown {
+  display: none;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  z-index: 35;
+  pointer-events: none;
+}
+
+#countdown.show { display: flex; }
+
+#countdown-number {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12rem;
+  font-weight: 700;
+  color: var(--green);
+  text-shadow: 0 0 60px var(--green-dim);
+  animation: countdown-pop 1s ease-out forwards;
+}
+
+@keyframes countdown-pop {
+  0%   { transform: scale(1.4); opacity: 1; }
+  90%  { transform: scale(0.95); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0; }
+}
